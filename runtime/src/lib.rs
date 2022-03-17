@@ -102,6 +102,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	impl_version: 1,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 1,
+    state_version: 1,
 };
 
 /// This determines the average expected block time that we are targeting.
@@ -191,6 +192,7 @@ impl frame_system::Config for Runtime {
 	type SS58Prefix = SS58Prefix;
 	/// The set code logic, just the default since we're not a parachain.
 	type OnSetCode = ();
+    type MaxConsumers = frame_support::traits::ConstU32<16>;
 }
 
 impl pallet_randomness_collective_flip::Config for Runtime {}
@@ -296,6 +298,12 @@ construct_runtime!(
 		Sudo: pallet_sudo,
 		// Include the custom logic from the pallet-template in the runtime.
 		TemplateModule: pallet_template,
+
+        // TODO: what should we do next 
+        // 1. vote the basement of the whole loserchain management 
+        // 2. airdrop for every loser should depend on the vote module 
+        // 3. forum the on-chain forum public web suit for web2 infra 
+        // 4. name service for the identify for every loser 
 	}
 );
 
