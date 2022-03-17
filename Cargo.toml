@@ -1,13 +1,7 @@
 [workspace]
 members = [
     'node',
-    'pallets/airdrop',
-    'pallets/forum',
-    'pallets/family',
-    'pallets/oracle',
-    'pallets/philanthropist',
     'pallets/template',
-    'pallets/evm',
     'runtime',
 ]
 [profile.release]
