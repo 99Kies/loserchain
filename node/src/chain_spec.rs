@@ -70,7 +70,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 		None,
 		// Properties
 		None,
-        None,
+		None,
 		// Extensions
 		None,
 	))
@@ -118,7 +118,7 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
 		None,
 		// Properties
 		None,
-        None,
+		None,
 		// Extensions
 		None,
 	))
