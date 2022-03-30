@@ -1,10 +1,11 @@
+use frame_benchmarking::frame_support::metadata::StorageEntryModifier::Default;
 use loserchain_runtime::{
 	AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig, Signature, SudoConfig,
-	SystemConfig, WASM_BINARY,
+	SystemConfig, WASM_BINARY,BaseFeeConfig, Precompiles, EVMConfig, EthereumConfig
 };
 use sc_service::ChainType;
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
-use sp_core::{sr25519, Pair, Public};
+use sp_core::{sr25519, Pair, Public, U256};
 use sp_finality_grandpa::AuthorityId as GrandpaId;
 use sp_runtime::traits::{IdentifyAccount, Verify};
 
@@ -132,6 +133,8 @@ fn testnet_genesis(
 	endowed_accounts: Vec<AccountId>,
 	_enable_println: bool,
 ) -> GenesisConfig {
+	let revert_bytecode = vec![0x60, 0x00, 0x60, 0x00, 0xFD];
+
 	GenesisConfig {
 		system: SystemConfig {
 			// Add Wasm runtime to storage.
@@ -151,6 +154,33 @@ fn testnet_genesis(
 			// Assign network admin rights.
 			key: Some(root_key),
 		},
-		transaction_payment: Default::default(),
+		// transaction_payment: Default::default(),
+		// base_fee: Default::default(),
+		// dynamic_fee: Default::default(),
+		// ethereum: Default::default(),
+
+		evm: EVMConfig {
+			// We need _some_ code inserted at the precompile address so that
+			// the evm will actually call the address.
+			accounts: Precompiles::used_addresses()
+				.map(|addr| {
+					(
+						addr,
+						pallet_evm::GenesisAccount {
+							nonce: U256::zero(),
+							balance: U256::from(1u64 << 61),
+							storage: std::collections::BTreeMap::new(),
+							code: revert_bytecode.clone(),
+						},
+					)
+				})
+				.collect(),
+		},
+		base_fee: BaseFeeConfig::new(
+			sp_core::U256::from(1_000_000_000u64),
+			false,
+			sp_runtime::Permill::from_parts(125_000),
+		),
+		ethereum: EthereumConfig {},
 	}
 }
